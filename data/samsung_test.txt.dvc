@@ -1,0 +1,5 @@
+outs:
+- md5: 360f04607a5dccb14cc183999ec15dfb
+  size: 26458166
+  hash: md5
+  path: samsung_test.txt

@@ -1,0 +1,5 @@
+outs:
+- md5: c7d8b43fbf9500662a3fadc8286f6f85
+  size: 5894
+  hash: md5
+  path: samsung_test_labels.txt

@@ -1,0 +1,5 @@
+outs:
+- md5: 8fac6d9d9463c7a7e3620fc9c5b85e46
+  size: 66006256
+  hash: md5
+  path: samsung_train.txt
