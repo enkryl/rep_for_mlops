@@ -1,0 +1,13 @@
+model:
+  type: svm.SVC
+  params:
+    kernel: linear
+
+preprocessing:
+  pca:
+    n_components: 200
+    random_state: 42
+
+data:
+  X_train_path: data/samsung_train.txt
+  y_train_path: data/samsung_train_labels.txt

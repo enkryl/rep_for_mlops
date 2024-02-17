@@ -1,0 +1,11 @@
+model:
+  my_model: model.pkl
+
+preprocessing:
+  pca:
+    n_components: 200
+    random_state: 42
+
+data:
+  X_test_path: data/samsung_test.txt
+  y_test_path: data/samsung_test_labels.txt
