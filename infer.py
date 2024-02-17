@@ -1,46 +1,42 @@
-# import dvc.api
+import logging
+
+import hydra
 import joblib
 import numpy as np
 import pandas as pd
-from matplotlib import pyplot as plt
 from sklearn import metrics
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 
-plt.style.use(["seaborn-darkgrid"])
-plt.rcParams["figure.figsize"] = (12, 9)
-plt.rcParams["font.family"] = "DejaVu Sans"
+log = logging.getLogger(__name__)
 
-# %matplotlib inline
-# %config InlineBackend.figure_format="retina"
 
-RANDOM_STATE = 42
+@hydra.main(version_base=None, config_path="config", config_name="infering")
+def testing_model(cfg):
+    X_test = pd.read_csv(cfg.data.X_test_path, sep="\\s+", header=None)
+    y_test = pd.read_csv(cfg.data.y_test_path, header=None)
 
-# your code here
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X_test)
+    X_scaled = pd.DataFrame(X_scaled)
 
-X_test = pd.read_csv("samsung_test.txt", sep="\\s+", header=None)
+    pca = PCA(
+        n_components=cfg.preprocessing.pca.n_components,
+        random_state=cfg.preprocessing.pca.random_state,
+    )
+    X_pca = pca.fit_transform(X_scaled)
 
-y_test = pd.read_csv("samsung_test_labels.txt", header=None)
+    model = joblib.load(cfg.model.my_model)
 
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X_test)
-X_scaled = pd.DataFrame(X_scaled)
+    y_test = np.array(y_test).ravel()
 
-pca = PCA(0.9, random_state=RANDOM_STATE)
-X_pca = pca.fit_transform(X_scaled)
+    y_pred = model.predict(X_pca)
 
-pca.explained_variance_ratio_.sum()
+    acc_test = metrics.accuracy_score(y_test, y_pred)
 
-plt.figure(figsize=(15, 10))
-plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y_test, s=15, cmap="viridis")
+    np.savetxt("predictions.txt", y_pred)
+    np.savetxt("metrics.txt", [acc_test])
 
-model = joblib.load("model.pkl")
 
-model.fit(X_pca)
-
-y_pred = model.predict(X_test)
-
-accuracy_train = metrics.accuracy_score(y_test.transpose().values[0], y_pred)
-
-np.savetxt("predictions.txt", y_pred)
-np.savetxt("metrics.txt", [accuracy_train])
+if __name__ == "__main__":
+    testing_model()
